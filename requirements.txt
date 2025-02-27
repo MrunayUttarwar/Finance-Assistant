@@ -1,0 +1,45 @@
+pip install streamlit transformers torch pandas
+
+python -m streamlit run app.py
+
+import sqlite3
+
+def get_table_columns(table_name):
+    conn = sqlite3.connect("users.db")  # Update with your database name
+    cursor = conn.cursor()
+
+    # Fetch column names
+    cursor.execute(f"PRAGMA table_info({table_name})")
+    columns = cursor.fetchall()
+    
+    conn.close()
+    
+    # Extract column names from the query result
+    return [col[1] for col in columns]
+
+# Example usage
+table_name = "users"  # Change this to the table you want to check
+columns = get_table_columns(table_name)
+print(f"Columns in '{table_name}' table: {columns}")
+
+import sqlite3
+
+def add_email_column():
+    conn = sqlite3.connect("users.db")
+    c = conn.cursor()
+
+    # Check if 'email' column already exists
+    c.execute("PRAGMA table_info(users1)")
+    columns = [col[1] for col in c.fetchall()]
+    
+    if "email" not in columns:
+        c.execute("ALTER TABLE users1 ADD COLUMN email TEXT")
+        conn.commit()
+        print("✅ 'email' column added successfully!")
+    else:
+        print("⚠️ 'email' column already exists!")
+
+    conn.close()
+
+# Run the function
+add_email_column()
